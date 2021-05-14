@@ -6,6 +6,8 @@ import { loadCharacters } from "./service/api-service";
 
 function App() {
   const [characters, setCharacters] = useState([]);
+  const [error, setError] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [searchString, setSearchString] = useState("");
 
@@ -16,7 +18,11 @@ function App() {
   );
 
   function loadData() {
-    loadCharacters().then((data) => setCharacters(data.results));
+    setIsLoading(true);
+    loadCharacters()
+      .then((data) => setCharacters(data.results))
+      .catch((error) => setError(error))
+      .finally(() => setIsLoading(false));
   }
 
   return (
@@ -30,7 +36,8 @@ function App() {
       />
       <button onClick={() => setSearchString("")}>clear</button>
       <button onClick={() => loadData()}>load data</button>
-
+      {isLoading && <div>Loading ... </div>}
+      {error && <div>Some error accrued!! {error.message}</div>}
       {filteredCharacters.map((character) => (
         <CharacterCard key={character.id} character={character} />
       ))}
