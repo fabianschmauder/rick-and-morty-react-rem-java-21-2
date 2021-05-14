@@ -5,20 +5,18 @@ import { useState } from "react";
 import { loadCharacters } from "./service/api-service";
 
 function App() {
-  const [response, setResponse] = useState({
-    results: [],
-  });
+  const [characters, setCharacters] = useState([]);
 
   const [searchString, setSearchString] = useState("");
 
-  const filteredCharacters = response.results.filter((character) =>
+  const filteredCharacters = characters.filter((character) =>
     character.name
       .toLocaleLowerCase()
       .includes(searchString.toLocaleLowerCase())
   );
 
   function loadData() {
-    loadCharacters().then((data) => setResponse(data));
+    loadCharacters().then((data) => setCharacters(data.results));
   }
 
   return (
