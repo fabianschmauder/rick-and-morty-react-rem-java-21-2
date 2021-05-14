@@ -1,13 +1,14 @@
 import "./App.css";
 import Header from "./components/Header";
 import CharacterCard from "./components/CharacterCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loadCharacters } from "./service/api-service";
 
 function App() {
   const [characters, setCharacters] = useState([]);
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [searchString, setSearchString] = useState("");
 
@@ -17,9 +18,13 @@ function App() {
       .includes(searchString.toLocaleLowerCase())
   );
 
-  function loadData() {
+  useEffect(() => {
+    loadData(page);
+  }, [page]);
+
+  function loadData(page) {
     setIsLoading(true);
-    loadCharacters()
+    loadCharacters(page)
       .then((data) => setCharacters(data.results))
       .catch((error) => setError(error))
       .finally(() => setIsLoading(false));
@@ -35,7 +40,7 @@ function App() {
         }}
       />
       <button onClick={() => setSearchString("")}>clear</button>
-      <button onClick={() => loadData()}>load data</button>
+      <button onClick={() => setPage(page + 1)}>next</button>
       {isLoading && <div>Loading ... </div>}
       {error && <div>Some error accrued!! {error.message}</div>}
       {filteredCharacters.map((character) => (
